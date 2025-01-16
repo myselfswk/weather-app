@@ -6,7 +6,7 @@ const axios = require('axios');
 const cors = require('cors');
 
 // Your credentials
-const fs = require('fs');
+// const fs = require('fs');
 // const CREDENTIALS = JSON.parse(fs.readFileSync('./weather-app.json'));
 const CREDENTIALS = {
     type: process.env.TYPE,
@@ -28,10 +28,10 @@ const PROJECID = CREDENTIALS.project_id;
 // Configuration for the client
 const CONFIGURATION = {
     credentials: {
-        private_key: CREDENTIALS['private_key'],
-        client_email: CREDENTIALS['client_email']
-    }
-}
+        private_key: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
+        client_email: process.env.CLIENT_EMAIL,
+    },
+};
 
 // Create a new session
 const sessionClient = new dialogflow.SessionsClient(CONFIGURATION);
@@ -96,14 +96,14 @@ webApp.post('/dialogflow-webhook', async (req, res) => {
         if (dialogflowResponse?.parameters?.weather) {
             // Extract parameters
             const location = dialogflowResponse?.parameters?.location
-                ? dialogflowResponse.parameters.location.stringValue
+                ? dialogflowResponse?.parameters?.location?.stringValue
                 : '';
 
             const days = dialogflowResponse?.parameters?.days
                 ? dialogflowResponse?.parameters.days?.numberValue
                 : 1;
-            const date = dialogflowResponse.parameters.date
-                ? dialogflowResponse.parameters.date.stringValue
+            const date = dialogflowResponse?.parameters?.date
+                ? dialogflowResponse?.parameters?.date?.stringValue
                 : new Date().toISOString().split('T')[0];
 
             let baseUrl;

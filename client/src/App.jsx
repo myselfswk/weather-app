@@ -28,7 +28,7 @@ const App = () => {
         (err) => {
           console.error("Error retrieving location:", err.message);
           reject(err);
-        }
+        }, { enableHighAccuracy: true, timeout: 5000 }
       );
     });
   };
